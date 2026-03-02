@@ -179,7 +179,6 @@ class EnterpriseSupportSystem:
             password=self.db_password,
             cursor_factory=RealDictCursor
         )
-        )
 
     def init_database(self):
         """初始化数据库表结构（PostgreSQL语法）"""
