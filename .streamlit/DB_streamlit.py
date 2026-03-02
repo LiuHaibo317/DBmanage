@@ -173,24 +173,10 @@ class EnterpriseSupportSystem:
 
     def get_connection(self):
         """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
-
-        try:
-            # 获取域名的 IPv4 地址
-            addrinfo = socket.getaddrinfo(
-                'db.jjsbjjzpqkkbyngqdrem.supabase.co',
-                self.db_port,
-                socket.AF_INET,           # 强制 IPv4
-                socket.SOCK_STREAM
-        )
-            ipv4_addr = addrinfo[0][4][0]
-            st.write(f"解析到的 IPv4 地址: {ipv4_addr}")  # 显示解析结果
-        except Exception as e:
-            st.error(f"域名解析失败 (IPv4): {e}")
-            st.stop()
-
+        import streamlit as st
         try:
             conn = psycopg2.connect(
-                host=ipv4_addr,            # 使用解析出的 IPv4 地址
+                host=self.db_host,      # 从 secrets 读取
                 port=self.db_port,
                 dbname=self.db_name,
                 user=self.db_user,
