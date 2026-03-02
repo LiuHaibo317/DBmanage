@@ -170,33 +170,17 @@ class EnterpriseSupportSystem:
         self.init_database()
 
     def get_connection(self):
-    """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
-    import streamlit as st
-    try:
-        conn = psycopg2.connect(
-            host=self.db_host,           # 从 secrets 读取
-            port=self.db_port,
-            dbname=self.db_name,
-            user=self.db_user,
-            password=self.db_password,
-            sslmode='require',
-            connect_timeout=10,
-            cursor_factory=RealDictCursor
-        )
-        return conn
-    except Exception as e:
-        st.error(f"数据库连接失败: {e}")
-        st.stop()
-
+        """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
+        import streamlit as st
         try:
             conn = psycopg2.connect(
-                host=host_ip,
+                host=self.db_host,           # 从 secrets 读取
                 port=self.db_port,
                 dbname=self.db_name,
                 user=self.db_user,
                 password=self.db_password,
-                sslmode='require',  # Supabase 需要 SSL
-                connect_timeout=10,  # 设置连接超时，避免无限等待
+                sslmode='require',
+                connect_timeout=10,
                 cursor_factory=RealDictCursor
             )
             return conn
