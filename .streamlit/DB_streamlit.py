@@ -13,6 +13,7 @@ from datetime import datetime
 import os
 import io
 import plotly.express as px
+import socket  # 确保在文件顶部导入
 
 # 设置页面配置
 st.set_page_config(
@@ -171,22 +172,30 @@ class EnterpriseSupportSystem:
     def get_connection(self):
         """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
         import streamlit as st
-        # 请将下面的 IP 地址替换为您查询到的 Supabase IPv4 地址
-        ipv4_host = "222.246.129.80"  # 例如 "123.123.123.123"
+
+        # 动态解析域名获取 IPv4 地址（每次连接都会重新解析）
+        try:
+            host_ip = socket.gethostbyname('db.jjsbjjzpqkkbyngqdrem.supabase.co')
+        except socket.gaierror as e:
+            st.error(f"域名解析失败: {e}")
+            st.stop()
+
         try:
             conn = psycopg2.connect(
-                host=ipv4_host,
+                host=host_ip,
                 port=self.db_port,
                 dbname=self.db_name,
                 user=self.db_user,
                 password=self.db_password,
+                sslmode='require',  # Supabase 需要 SSL
+                connect_timeout=10,  # 设置连接超时，避免无限等待
                 cursor_factory=RealDictCursor
             )
             return conn
         except Exception as e:
             st.error(f"数据库连接失败: {e}")
-            st.stop()  # 停止应用执行
-
+            st.stop()
+            
     def init_database(self):
         """初始化数据库表结构（PostgreSQL语法）"""
         conn = self.get_connection()
