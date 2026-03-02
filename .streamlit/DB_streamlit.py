@@ -173,37 +173,36 @@ class EnterpriseSupportSystem:
 
     def get_connection(self):
         """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
-    
-    try:
-        # 获取域名的 IPv4 地址
-        addrinfo = socket.getaddrinfo(
-            'db.jjsbjjzpqkkbyngqdrem.supabase.co',
-            self.db_port,
-            socket.AF_INET,           # 强制 IPv4
-            socket.SOCK_STREAM
-        )
-        # 取第一个 IPv4 地址
-        ipv4_addr = addrinfo[0][4][0]
-        st.write(f"解析到的 IPv4 地址: {ipv4_addr}")  # 显示出来以便查看
-    except Exception as e:
-        st.error(f"域名解析失败 (IPv4): {e}")
-        st.stop()
 
-    try:
-        conn = psycopg2.connect(
-            host=ipv4_addr,            # 使用 IPv4 地址
-            port=self.db_port,
-            dbname=self.db_name,
-            user=self.db_user,
-            password=self.db_password,
-            sslmode='require',
-            connect_timeout=10,
-            cursor_factory=RealDictCursor
+        try:
+            # 获取域名的 IPv4 地址
+            addrinfo = socket.getaddrinfo(
+                'db.jjsbjjzpqkkbyngqdrem.supabase.co',
+                self.db_port,
+                socket.AF_INET,           # 强制 IPv4
+                socket.SOCK_STREAM
         )
-        return conn
-    except Exception as e:
-        st.error(f"数据库连接失败: {e}")
-        st.stop()
+            ipv4_addr = addrinfo[0][4][0]
+            st.write(f"解析到的 IPv4 地址: {ipv4_addr}")  # 显示解析结果
+        except Exception as e:
+            st.error(f"域名解析失败 (IPv4): {e}")
+            st.stop()
+
+        try:
+            conn = psycopg2.connect(
+                host=ipv4_addr,            # 使用解析出的 IPv4 地址
+                port=self.db_port,
+                dbname=self.db_name,
+                user=self.db_user,
+                password=self.db_password,
+                sslmode='require',
+                connect_timeout=10,
+                cursor_factory=RealDictCursor
+            )
+            return conn
+        except Exception as e:
+            st.error(f"数据库连接失败: {e}")
+            st.stop()
             
     def init_database(self):
         """初始化数据库表结构（PostgreSQL语法）"""
