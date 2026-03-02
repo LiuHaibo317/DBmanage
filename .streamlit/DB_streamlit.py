@@ -170,15 +170,23 @@ class EnterpriseSupportSystem:
         self.init_database()
 
     def get_connection(self):
-        """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
-        import streamlit as st
-
-        # 动态解析域名获取 IPv4 地址（每次连接都会重新解析）
-        try:
-            host_ip = socket.gethostbyname('db.jjsbjjzpqkkbyngqdrem.supabase.co')
-        except socket.gaierror as e:
-            st.error(f"域名解析失败: {e}")
-            st.stop()
+    """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
+    import streamlit as st
+    try:
+        conn = psycopg2.connect(
+            host='db.jjsbjjzpqkkbyngqdrem.supabase.co',  # 直接使用域名
+            port=self.db_port,
+            dbname=self.db_name,
+            user=self.db_user,
+            password=self.db_password,
+            sslmode='require',          # 强制使用 SSL
+            connect_timeout=10,          # 连接超时，避免无限等待
+            cursor_factory=RealDictCursor
+        )
+        return conn
+    except Exception as e:
+        st.error(f"数据库连接失败: {e}")
+        st.stop()
 
         try:
             conn = psycopg2.connect(
