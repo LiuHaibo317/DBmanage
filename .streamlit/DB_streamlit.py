@@ -174,13 +174,13 @@ class EnterpriseSupportSystem:
     import streamlit as st
     try:
         conn = psycopg2.connect(
-            host='db.jjsbjjzpqkkbyngqdrem.supabase.co',  # 直接使用域名
+            host=self.db_host,           # 从 secrets 读取
             port=self.db_port,
             dbname=self.db_name,
             user=self.db_user,
             password=self.db_password,
-            sslmode='require',          # 强制使用 SSL
-            connect_timeout=10,          # 连接超时，避免无限等待
+            sslmode='require',
+            connect_timeout=10,
             cursor_factory=RealDictCursor
         )
         return conn
