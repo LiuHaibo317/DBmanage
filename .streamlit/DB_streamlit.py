@@ -174,9 +174,24 @@ class EnterpriseSupportSystem:
     def get_connection(self):
         """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
         import streamlit as st
+        import socket
+
+        # 后备 IP（您本地解析到的地址）
+        FALLBACK_IP = "167.71.238.32"
+
+        # 尝试解析域名
+        try:
+            # 强制获取 IPv4 地址
+            ip = socket.gethostbyname(self.db_host)
+            st.write(f"✅ DNS 解析成功: {self.db_host} -> {ip}")
+        except Exception as e:
+            st.warning(f"⚠️ DNS 解析失败: {e}，将使用后备 IP {FALLBACK_IP}")
+            ip = FALLBACK_IP
+
+        # 连接数据库
         try:
             conn = psycopg2.connect(
-                host=self.db_host,      # 从 secrets 读取
+                host=ip,
                 port=self.db_port,
                 dbname=self.db_name,
                 user=self.db_user,
