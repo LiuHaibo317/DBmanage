@@ -197,7 +197,7 @@ class EnterpriseSupportSystem:
                 user=self.db_user,
                 password=self.db_password,
                 sslmode='require',
-                connect_timeout=10,
+               connect_timeout=10,
                 cursor_factory=RealDictCursor
             )
             return conn
