@@ -169,16 +169,23 @@ class EnterpriseSupportSystem:
         self.init_database()
 
     def get_connection(self):
-        # 将域名替换为实际的 IPv4 地址（请填入您查询到的 IP）
-        ipv4_host = "222.246.129.80"  # 替换为实际 IP
-        return psycopg2.connect(
-            host=ipv4_host,  # 使用 IPv4 地址
-            port=self.db_port,
-            dbname=self.db_name,
-            user=self.db_user,
-            password=self.db_password,
-            cursor_factory=RealDictCursor
-        )
+        """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
+        import streamlit as st
+        # 请将下面的 IP 地址替换为您查询到的 Supabase IPv4 地址
+        ipv4_host = "222.246.129.80"  # 例如 "123.123.123.123"
+        try:
+            conn = psycopg2.connect(
+                host=ipv4_host,
+                port=self.db_port,
+                dbname=self.db_name,
+                user=self.db_user,
+                password=self.db_password,
+                cursor_factory=RealDictCursor
+            )
+            return conn
+        except Exception as e:
+            st.error(f"数据库连接失败: {e}")
+            st.stop()  # 停止应用执行
 
     def init_database(self):
         """初始化数据库表结构（PostgreSQL语法）"""
