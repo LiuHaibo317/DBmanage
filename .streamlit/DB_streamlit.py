@@ -169,14 +169,16 @@ class EnterpriseSupportSystem:
         self.init_database()
 
     def get_connection(self):
-        """获取数据库连接（返回 RealDictCursor 便于通过列名访问）"""
+        # 将域名替换为实际的 IPv4 地址（请填入您查询到的 IP）
+        ipv4_host = "222.246.129.80"  # 替换为实际 IP
         return psycopg2.connect(
-            host=self.db_host,
+            host=ipv4_host,  # 使用 IPv4 地址
             port=self.db_port,
             dbname=self.db_name,
             user=self.db_user,
             password=self.db_password,
             cursor_factory=RealDictCursor
+        )
         )
 
     def init_database(self):
